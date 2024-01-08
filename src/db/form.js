@@ -1,0 +1,52 @@
+module.exports = {
+  //// Bio
+  createBio: (values) => {
+    return {
+      text: "INSERT INTO users (uuid, email, username, ksvu_code, gender, job_title, current_company, role_user, status_account) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      values: values,
+    };
+  },
+  createProfile: (values) => {
+    return {
+      text: "INSERT INTO profile (user_id, created_at) VALUES ($1, $2)",
+      values: values,
+    };
+  },
+  deleteBioById: (text, values) => {
+    return {
+      text: text,
+      values: values,
+    };
+  },
+  //// Invitation
+  createInvitation: (values) => {
+    return {
+      text: "INSERT INTO invitation (uuid_user, inviter, company, notes, inviting_url, created_at) VALUES ($1, $2, $3, $4, $5, $6)",
+      values: values,
+    };
+  },
+  createInvitation: (text, values) => {
+    return {
+      text: text,
+      values: values,
+    };
+  },
+  getInvitation: (text, values) => {
+    return {
+      text: text,
+      values: values,
+    };
+  },
+  getInvitationById: (values) => {
+    return {
+      text: "SELECT * FROM invitation WHERE id = $1",
+      values: values,
+    };
+  },
+  deleteInvitationById: (values) => {
+    return {
+      text: "DELETE FROM invitation WHERE id = $1",
+      values: values,
+    };
+  },
+};
