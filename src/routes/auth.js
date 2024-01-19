@@ -1,30 +1,22 @@
+/**
+ * TODO: Login, Forgot, Reset, Change are able to use ksvu_code or email & password
+ */
+
 const controller = require("../controllers/auth");
+const validate = require("../middlewares/validate");
 
 const authRouter = (fastify, _, done) => {
-  //// Visitor
-  fastify.register(
-    (fastify, _, done) => {
-      fastify.register((fastify, _, done) => {
-        fastify.post("/login", controller.loginByVisitor);
-        done();
-      });
-      fastify.post("/password/forget", controller.forgetKSVUCode);
-      fastify.get("/password/reset", controller.resetKSVUCode);
-      fastify.patch("/password/update", controller.changeKSVUCode);
-      done();
-    },
-    { prefix: "/visitor" }
-  );
-
-  //// Admin
-  fastify.register(
-    (fastify, _, done) => {
-      fastify.post("/login/admin", controller.loginByAdmin);
-      fastify.patch("/password/update", controller.changePasswordByAdmin);
-      done();
-    },
-    { prefix: "/admin" }
-  );
+  fastify.register((fastify, _, done) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await validate.body(request, reply);
+    });
+    fastify.post("/login", controller.login);
+    done();
+  });
+  fastify.delete("/logout", controller.logout);
+  fastify.post("/password/forget", controller.forget);
+  fastify.get("/password/reset", controller.reset);
+  fastify.patch("/password/update", controller.change);
   done();
 };
 

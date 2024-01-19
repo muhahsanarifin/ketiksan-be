@@ -92,6 +92,20 @@ module.exports = {
       });
     });
   },
+  getProfileByEmail: async (body) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getProfileByEmail([body.email]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows[0],
+        });
+      })
+    })
+  },
   getProfileByKSVUCode: async (body) => {
     return new Promise((resolve, reject) => {
       pool.query(

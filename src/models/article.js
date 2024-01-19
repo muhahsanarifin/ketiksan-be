@@ -4,6 +4,7 @@ const query = require("../db/article");
 module.exports = {
   createArticle: async (body) => {
     const { title, description, author, category_article_id } = body;
+
     return new Promise((resolve, reject) => {
       pool.query(
         query.createArticle([

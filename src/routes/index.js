@@ -3,7 +3,7 @@ const jwt = require("@fastify/jwt");
 const authRouter = require("./auth");
 const articleRoute = require("./article");
 const formRoute = require("./form");
-const portofolioRoute = require("./protofolio");
+const portofolioRoute = require("./portofolio");
 const userRoute = require("./user");
 
 const routes = (fastify, _, done) => {

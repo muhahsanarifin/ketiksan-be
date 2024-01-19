@@ -1,7 +1,7 @@
 module.exports = {
   createArticle: (values) => {
     return {
-      text: "INSERT INTO article (title, description, author, category_article_id, crated_at) VALUES ($1, $2, $3, $4, $5)",
+      text: "INSERT INTO article (title, description, author, category_article_id, created_at) VALUES ($1, $2, $3, $4, $5)",
       values: values,
     };
   },

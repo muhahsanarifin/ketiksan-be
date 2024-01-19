@@ -1,9 +1,12 @@
-const fastify = require("fastify");
 const controller = require("../controllers/user");
+const check = require("../middlewares/check");
 
 const userRoute = (fastify, _, done) => {
   fastify.register(
     (fastify, _, done) => {
+      fastify.addHook("onRequest", async (request, reply) => {
+        await check.access(request, reply);
+      });
       fastify.get("/", controller.getProfile);
       fastify.get("/detail", controller.getProfileById);
       done();

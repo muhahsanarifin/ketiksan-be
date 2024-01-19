@@ -1,11 +1,14 @@
+/**
+ * TODO: Login, Forgot, Reset, Change are able to use ksvu_code or email & password
+ */
+
 const pool = require("../config/postgre");
 const query = require("../db/auth");
 
 module.exports = {
-  //// Visitor
-  loginByVisitor: async (data, token) => {
+  login: async (data, token) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.loginByVisitor([data.id, token]), (err, result) => {
+      pool.query(query.login([data.id, token]), (err, result) => {
         if (err) {
           return reject(err);
         }
@@ -19,7 +22,20 @@ module.exports = {
       });
     });
   },
-  forgetKSVUCode: async () => {
+  logout: async () => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.logout(), (err, _) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful logout",
+        });
+      });
+    });
+  },
+  forget: async () => {
     return new Promise((resolve, reject) => {
       pool.query(query.forgetKSVUCode(), (err, result) => {
         if (err) {
@@ -28,7 +44,7 @@ module.exports = {
       });
     });
   },
-  resetKSVUCode: async (query) => {
+  reset: async (query) => {
     return new Promise((resolve, reject) => {
       pool.query(query.resetKSVUCode(), (err, result) => {
         if (err) {
@@ -37,31 +53,11 @@ module.exports = {
       });
     });
   },
-  changeKSVUCode: async () => {
+  change: async () => {
     return new Promise((resolve, reject) => {
       pool.query(query.changeKSVUCode(), (err, result) => {
         if (err) {
           return reject(err);
-        }
-      });
-    });
-  },
-
-  //// Admin
-  loginByAdmin: async () => {
-    return new Promise((resolve, reject) => {
-      pool.query(query.loginByAdmin(), (err, result) => {
-        if (err) {
-          reject(err);
-        }
-      });
-    });
-  },
-  changePasswordByAdmin: async (data) => {
-    return new Promise((resolve, reject) => {
-      pool.query(query.changePasswordByAdmin(), (err, result) => {
-        if (err) {
-          reject(err);
         }
       });
     });

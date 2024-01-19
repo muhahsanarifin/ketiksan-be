@@ -1,10 +1,10 @@
 const model = require("../models/article");
 
 module.exports = {
-  //// Bio controller
   createArticle: async (request, reply) => {
     try {
       const response = await model.createArticle(request.body);
+
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -46,7 +46,6 @@ module.exports = {
   },
   updateArticle: async (request, reply) => {
     try {
-      
       //// app = available aticle data
       const aap = await model.updateArticle(request.params);
 
