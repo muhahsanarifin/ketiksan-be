@@ -1,17 +1,25 @@
-const fastify = require("fastify")();
-
-fastify.register(require("fastify-bcrypt"), {
-  saltWorkFactor: 12,
-});
-
 module.exports = {
   default: (value, exist) => {
     return value ? value : exist;
   },
-  hash: async (password) => {
-    return await fastify.bcrypt.hash(password);
+  hash: async (request, pass) => {
+    const hash = await request.bcryptHash(pass);
+    return hash;
   },
-  compare: async (password, hash) => {
-    return await fastify.compare(password, hash);
+  compare: async (request, pass, hash) => {
+    const match = await request.bcryptCompare(pass, hash);
+    return match;
+  },
+  //// 1 = admin, 2 = recruiter, 3 = guest
+  role: (id) => {
+    if (+id === 1) {
+      return "admin";
+    }
+    if (+id === 2) {
+      return "recruiter";
+    }
+    if (+id === 3) {
+      return "guest";
+    }
   },
 };

@@ -87,7 +87,7 @@ module.exports = {
         return resolve({
           status: "Successful",
           msg: "Successful get data",
-          data: result.rows[0],
+          data: result.rows,
         });
       });
     });
@@ -101,10 +101,10 @@ module.exports = {
         return resolve({
           status: "Successful",
           msg: "Successful get data",
-          data: result.rows[0],
+          data: result.rows,
         });
-      })
-    })
+      });
+    });
   },
   getProfileByKSVUCode: async (body) => {
     return new Promise((resolve, reject) => {
@@ -117,10 +117,24 @@ module.exports = {
           return resolve({
             status: "Successful",
             msg: "Successful get data",
-            data: result.rows[0],
+            data: result.rows,
           });
         }
       );
+    });
+  },
+  getProfileByUsername: async (body) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getProfileByUsername([body.username]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
+        });
+      });
     });
   },
   //// Approach with params.id || payload.uuid || id

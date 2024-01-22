@@ -11,4 +11,15 @@ module.exports = {
       charset: "alphanumeric",
     });
   },
+  maskedString: (str) => {
+    let output = "",
+      sLastIdx = str.includes("@") ? str.indexOf("@") - 2 : str.length - 2;
+    Array.from(str).forEach((value, idx) => {
+      if (idx > 0 && idx <= sLastIdx) {
+        value = "*";
+      }
+      output += value;
+    });
+    return output;
+  },
 };

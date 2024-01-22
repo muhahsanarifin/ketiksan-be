@@ -6,6 +6,7 @@ const userRoute = (fastify, _, done) => {
     (fastify, _, done) => {
       fastify.addHook("onRequest", async (request, reply) => {
         await check.access(request, reply);
+        await check.allowedByRoles(["admin", "recruiter"], request, reply);
       });
       fastify.get("/", controller.getProfile);
       fastify.get("/detail", controller.getProfileById);

@@ -1,11 +1,18 @@
 const controller = require("../controllers/form");
 const check = require("../middlewares/check");
+const validate = require("../middlewares/validate");
 
 const formRoute = (fastify, _, done) => {
   //// Bio
   fastify.register(
     (fastify, _, done) => {
-      fastify.post("/create", controller.createBio);
+      fastify.register((fastify, _, done) => {
+        fastify.addHook("preHandler", async (request, reply) => {
+          await validate.register(request, reply);
+        });
+        fastify.post("/create", controller.createBio);
+        done();
+      });
       fastify.register((fastify, _, done) => {
         fastify.addHook("onRequest", async (request, reply) => {
           await check.access(request, reply);

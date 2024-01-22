@@ -1,19 +1,34 @@
+const { getLoginHistoryByUserId } = require("../models/auth");
+const value = require("../helpers/value");
+
 module.exports = {
   access: async (request, reply) => {
-    //const bearerToken = request?.headers?.authorization;
-    //console.log("Bearer token: ", bearerToken.split(" ")[1]);
-
     try {
-      //// jwtVeryfy() & jwtDecode() can be used to decode token.
       const decodedToken = await request.jwtVerify();
-      // console.log("Result decoded token :", decodedToken);
+
+      const response = await getLoginHistoryByUserId(decodedToken);
+
+      if (response.data.length === 0) {
+        reply
+          .code(403)
+          .send({ status: "Forbidden", msg: "You have to login first!" });
+      }
 
       request.payload = decodedToken;
-
-      // const decodedToken = await request.jwtDecode(bearerToken.split(" ")[1]);
-      // console.log("Result decoded token :", decodedToken);
     } catch (error) {
       reply.send(error);
+    }
+  },
+  allowedByRoles: async (allowedByRoles, request, reply) => {
+    const { role_user } = request.payload;
+
+    const hasAllowedRoles = allowedByRoles.includes(value.role(role_user));
+
+    if (!hasAllowedRoles) {
+      reply.code(403).send({
+        status: "Forbidden",
+        msg: "Access denied",
+      });
     }
   },
 };

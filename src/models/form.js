@@ -3,9 +3,10 @@ const random = require("../helpers/random");
 const query = require("../db/form");
 
 module.exports = {
-  //// Bio
+  //// Biodata
   createBio: async (body) => {
-    const { email, username, gender, job_title, current_company } = body;
+    const { email, username, gender, job_title, current_company, role_user } =
+      body;
 
     return new Promise((resolve, reject) => {
       pool.query(
@@ -17,7 +18,7 @@ module.exports = {
           gender,
           job_title,
           current_company,
-          2,
+          role_user || 3,
           1,
         ]),
         (err, result) => {

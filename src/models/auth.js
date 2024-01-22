@@ -3,6 +3,7 @@
  */
 
 const pool = require("../config/postgre");
+const random = require("../helpers/random");
 const query = require("../db/auth");
 
 module.exports = {
@@ -22,9 +23,52 @@ module.exports = {
       });
     });
   },
-  logout: async () => {
+  register: async (body, hash) => {
+    const { email, username, gender, job_title, current_company, role_user } =
+      body;
     return new Promise((resolve, reject) => {
-      pool.query(query.logout(), (err, _) => {
+      pool.query(
+        query.register([
+          random.uuid(),
+          email,
+          username,
+          hash,
+          random.ksvucode(),
+          gender,
+          job_title || "",
+          current_company || "",
+          role_user || 3,
+          1,
+        ]),
+        (err, _) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            status: "Successful",
+            msg: "Successful registered",
+          });
+        }
+      );
+    });
+  },
+  getLoginHistoryByUserId: async (payload) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getLoginHistoryByUserId([payload.id]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
+        });
+      });
+    });
+  },
+  logout: async (payload) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.logout([payload.id]), (err, _) => {
         if (err) {
           return reject(err);
         }

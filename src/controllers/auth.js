@@ -7,55 +7,64 @@ const {
   getProfileByKSVUCode,
   updateProfileById,
   getProfileByEmail,
+  getProfileByUsername,
 } = require("../models/user");
+const value = require("../helpers/value");
 
 module.exports = {
   login: async (request, reply) => {
+    const loginWith = request.query.with || "ksvu_code";
+
     try {
-      if (Object.keys(request.body).includes("username", "password")) {
-
-        //// gtpbuap = Get profile by email
-        const gtpbuap = await getProfileByEmail(request.body);
-
+      if (loginWith === "email") {
+        //// gtpbe = Get profile by email
+        const gtpbe = await getProfileByEmail(request.body);
         const payload = {
-          ...gtpbuap.data,
+          ...gtpbe.data[0],
         };
-
         const token = await reply.jwtSign({ ...payload });
-
         const response = await Promise.all([
-          await model.login(gtpbuap.data, token),
+          await model.login(gtpbe.data[0], token),
           await updateProfileById({
             text: "UPDATE profile SET active_login_at = $2 WHERE user_id = $1",
-            id: gtpbuap.data.id,
+            id: gtpbe.data[0].id,
           }),
         ]);
-
         reply.code(201).send(response[0]);
-      } else if (Object.keys(request.body).includes("ksvu_code")) {
+      }
 
+      if (loginWith === "username") {
+        //// gtpbu = Get profile by username
+        const gtpbu = await getProfileByUsername(request.body);
+        const payload = {
+          ...gtpbu.data[0],
+        };
+        const token = await reply.jwtSign({ ...payload });
+        const response = await Promise.all([
+          await model.login(gtpbu.data[0], token),
+          await updateProfileById({
+            text: "UPDATE profile SET active_login_at = $2 WHERE user_id = $1",
+            id: gtpbu.data[0].id,
+          }),
+        ]);
+        reply.code(201).send(response[0]);
+      }
+
+      if (loginWith === "ksvu_code") {
         //// gtpbk = Get profile by KSVUCode
         const gtpbk = await getProfileByKSVUCode(request.body);
-
         const payload = {
-          ...gtpbk.data,
+          ...gtpbk.data[0],
         };
-
         const token = await reply.jwtSign({ ...payload });
-
         const response = await Promise.all([
-          await model.login(gtpbk.data, token),
+          await model.login(gtpbk.data[0], token),
           await updateProfileById({
             text: "UPDATE profile SET active_login_at = $2 WHERE user_id = $1",
-            id: gtpbk.data.id,
+            id: gtpbk.data[0].id,
           }),
         ]);
-
         reply.code(201).send(response[0]);
-      } else {
-        reply.code(400).send({
-          status: "Bad request",
-        });
       }
     } catch (error) {
       reply.code(500).send({
@@ -63,16 +72,29 @@ module.exports = {
       });
     }
   },
+  register: async (request, reply) => {
+    try {
+      const hash = await value.hash(request, request.body.pass);
+
+      const response = await model.register(request.body, hash);
+
+      reply.code(201).send(response);
+    } catch (error) {
+      reply.code(500).send({
+        status: "Server Error",
+        msg: error?.message || "Internal Server Error",
+      });
+    }
+  },
   logout: async (request, reply) => {
     try {
-      const response = await model.logout();
-      reply.code(201).send(response)
+      const response = await model.logout(request.payload);
+      reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
         msg: error?.message || "Internal Server Error",
       });
     }
-
   },
   forget: async (request, reply) => {
     try {
