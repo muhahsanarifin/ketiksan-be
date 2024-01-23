@@ -46,13 +46,13 @@ module.exports = {
   },
   updateArticle: async (request, reply) => {
     try {
-      //// app = available aticle data
-      const aap = await model.updateArticle(request.params);
+      //// app = available article data
+      const aap = await model.getArticleById(request.params);
 
       const response = await model.updateArticle(
         request.body,
         request.params,
-        aap
+        aap[0]
       );
 
       reply.code(201).send(response);

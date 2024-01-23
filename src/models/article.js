@@ -29,7 +29,7 @@ module.exports = {
   },
   getArticle: async (q) => {
     const page = q.page || "";
-    const results_per_page = q.limi || "";
+    const results_per_page = q.limit || "";
     const sort_by = q.sort_by || "created_at";
     const order = q.order || "desc";
 
@@ -45,7 +45,7 @@ module.exports = {
             (+page - 1) * +results_per_page
           }`
         : results_per_page
-        ? limit
+        ? ` LIMIT ${+results_per_page}`
         : "";
 
     return new Promise((resolve, reject) => {
@@ -84,7 +84,7 @@ module.exports = {
             return resolve({
               status: "Successful",
               msg: "Successful get data",
-              data: result.rows,
+              data: rws.rows,
             });
           }
         }
@@ -100,7 +100,21 @@ module.exports = {
         return resolve({
           status: "Successful",
           msg: "Successful get data",
-          data: result.rows[0],
+          data: result.rows,
+        });
+      });
+    });
+  },
+  getTitleArticle: async (body) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getTitleArticle([body.title]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
         });
       });
     });

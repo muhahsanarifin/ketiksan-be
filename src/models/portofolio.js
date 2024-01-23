@@ -50,7 +50,7 @@ module.exports = {
             (+page - 1) * +results_per_page
           }`
         : results_per_page
-        ? limit
+        ? ` LIMIT ${+results_per_page}`
         : "";
 
     return new Promise((resolve, reject) => {
@@ -109,6 +109,20 @@ module.exports = {
           status: "Successful",
           msg: "Successful get data",
           data: result.rows[0],
+        });
+      });
+    });
+  },
+  getTitlePortofolio: async (body) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getTitlePortofolio([body.title]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
         });
       });
     });

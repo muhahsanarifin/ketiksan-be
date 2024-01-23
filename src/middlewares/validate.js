@@ -22,6 +22,21 @@ module.exports = {
       });
     }
   },
+  duplicate: async (request, reply, data) => {
+
+    const response = await data;
+
+    if (
+      response.data.some((value) =>
+        value.title.toLowerCase().includes(request.body.title.toLowerCase())
+      )
+    ) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `(${request.body.title}) title, already exists`,
+      });
+    }
+  },
   register: async (request, reply) => {
     const emailRegex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
     if (emailRegex.test(request.body.email) === false) {
@@ -126,7 +141,4 @@ module.exports = {
       }
     }
   },
-  // params: async (request, reply) => {
-
-  // }
 };

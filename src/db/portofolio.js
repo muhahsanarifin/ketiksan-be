@@ -17,6 +17,12 @@ module.exports = {
       values: values,
     };
   },
+  getTitlePortofolio: (values) => {
+    return {
+      text: "SELECT title FROM portofolio WHERE title = $1",
+      values: values,
+    };
+  },
   updatePortofolio: (values) => {
     return {
       text: "UPDATE SET title = $2, description = $3, url_resource = $4, tech_used = $5, category_portofolio_id = $6, updated_at = $7 WHERE id = $1",

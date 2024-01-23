@@ -5,6 +5,7 @@ const articleRoute = require("./article");
 const formRoute = require("./form");
 const portofolioRoute = require("./portofolio");
 const userRoute = require("./user");
+const categoryRoute = require("./category");
 
 const routes = (fastify, _, done) => {
   fastify.register(jwt, {
@@ -19,6 +20,7 @@ const routes = (fastify, _, done) => {
   fastify.register(formRoute, { prefix: "/form" });
   fastify.register(portofolioRoute, { prefix: "/portofolio" });
   fastify.register(userRoute, { prefix: "/user" });
+  fastify.register(categoryRoute, {prefix: "/category"});
   done();
 };
 

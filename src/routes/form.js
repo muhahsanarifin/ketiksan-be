@@ -16,6 +16,7 @@ const formRoute = (fastify, _, done) => {
       fastify.register((fastify, _, done) => {
         fastify.addHook("onRequest", async (request, reply) => {
           await check.access(request, reply);
+          await check.allowedByRoles(["recruiter"], request, reply);
         });
         fastify.delete("/:id/delete", controller.deleteBioById);
         done();
@@ -30,6 +31,7 @@ const formRoute = (fastify, _, done) => {
     (fastify, _, done) => {
       fastify.addHook("onRequest", async (request, reply) => {
         await check.access(request, reply);
+        await check.allowedByRoles(["recruiter"], request, reply);
       });
       fastify.post("/create", controller.createInvitation);
       fastify.get("/", controller.getInvitation);

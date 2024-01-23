@@ -29,18 +29,21 @@ const authRouter = (fastify, _, done) => {
   fastify.register((fastify, _, done) => {
     fastify.addHook("onRequest", async (request, reply) => {
       await check.access(request, reply);
-      await check.allowedByRoles(
-        ["admin", "recruiter"],
-        request,
-        reply
-      );
+      await check.allowedByRoles(["admin", "recruiter"], request, reply);
     });
     fastify.delete("/logout", controller.logout);
     done();
   });
   fastify.post("/password/forget", controller.forget);
   fastify.get("/password/reset", controller.reset);
-  fastify.patch("/password/update", controller.change);
+  fastify.register((fastify, _, done) => {
+    fastify.addHook("onRequest", async (request, reply) => {
+      await check.access(request, reply);
+      await check.allowedByRoles(["admin"], request, reply);
+    });
+    fastify.patch("/password/update", controller.change);
+    done();
+  });
   done();
 };
 

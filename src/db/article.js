@@ -17,6 +17,12 @@ module.exports = {
       values: values,
     };
   },
+  getTitleArticle: (values) => {
+    return {
+      text: "SELECT title FROM article WHERE title = $1",
+      values: values,
+    };
+  },
   updateArticle: (values) => {
     return {
       text: "UPDATE SET $2 = title, $3 = description, author = $4, category_article_id = $5, update_at = $6 WHERE id = $1",

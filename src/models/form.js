@@ -120,7 +120,7 @@ module.exports = {
             (+page - 1) * +results_per_page
           }`
         : results_per_page
-        ? limit
+        ? ` LIMIT ${+results_per_page}`
         : "";
 
     return new Promise((resolve, reject) => {
@@ -162,7 +162,7 @@ module.exports = {
             return resolve({
               status: "Successful",
               msg: "Successful get data",
-              data: result.rows,
+              data: rws.rows,
             });
           }
         }
