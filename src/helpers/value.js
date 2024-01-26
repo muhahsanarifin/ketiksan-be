@@ -22,4 +22,15 @@ module.exports = {
       return "guest";
     }
   },
+  gender: (id) => {
+    if (+id) {
+      return "Mr";
+    }
+    if (+id) {
+      return "Ms";
+    }
+    if (+id) {
+      return "Miss";
+    }
+  },
 };

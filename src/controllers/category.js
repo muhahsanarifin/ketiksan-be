@@ -62,7 +62,7 @@ module.exports = {
       const response = await model.updateCategoryArticle(
         request.body,
         request.params,
-        aca
+        aca[0]
       );
       reply.code(201).send(response);
     } catch (error) {
@@ -133,7 +133,7 @@ module.exports = {
       const response = await model.updateCategoryPortofolio(
         request.body,
         request.params,
-        acp
+        acp[0]
       );
       reply.code(201).send(response);
     } catch (error) {

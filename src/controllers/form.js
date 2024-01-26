@@ -1,9 +1,22 @@
+const { mailer } = require("../helpers/mailer");
 const model = require("../models/form");
 module.exports = {
   //// Bio controller
   createBio: async (request, reply) => {
     try {
       const response = await model.createBio(request.body);
+
+      // const response = Promise.all([
+      //   model.createBio(request.body),
+      //   mailer({
+      //     to: request.body.email,
+      //     text: "Thank you!",
+      //     subject: "Ketik san test!",
+      //   }),
+      // ]);
+
+      request.bioResponse = response
+
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -28,7 +41,10 @@ module.exports = {
   //// Invitation controller
   createInvitation: async (request, reply) => {
     try {
-      const response = await model.createInvitation(request.body, request.payload);
+      const response = await model.createInvitation(
+        request.body,
+        request.payload
+      );
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({

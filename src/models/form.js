@@ -38,6 +38,7 @@ module.exports = {
                 msg: "Successful Created",
                 data: {
                   ksvu_code: result.rows[0].ksvu_code,
+                  gender: result.rows[0].gender,
                 },
               });
             }

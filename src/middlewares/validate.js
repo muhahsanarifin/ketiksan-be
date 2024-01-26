@@ -23,7 +23,6 @@ module.exports = {
     }
   },
   duplicate: async (request, reply, data) => {
-
     const response = await data;
 
     if (
@@ -55,9 +54,9 @@ module.exports = {
       });
     }
 
-    const getProfileByUsername = await getProfileByUsername(request.body);
+    const gpbu = await getProfileByUsername(request.body);
 
-    if (getProfileByUsername.data.length > 0) {
+    if (gpbu.data.length > 0) {
       reply.code(400).send({
         status: "Bad Request",
         msg: `${random.maskedString(
@@ -77,6 +76,35 @@ module.exports = {
       return res.status(400).json({
         status: "Bad Request",
         msg: "Password does not match",
+      });
+    }
+  },
+  collect: async (request, reply) => {
+    const emailRegex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
+    if (emailRegex.test(request.body.email) === false) {
+      return res.status(400).json({
+        status: "Bad Request",
+        msg: "Format email is wrong",
+      });
+    }
+
+    const gtpbuap = await getProfileByEmail(request.body);
+
+    if (gtpbuap.data.length > 0) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `${random.maskedString(request.body.email)} has been registered`,
+      });
+    }
+
+    const gpbu = await getProfileByUsername(request.body);
+
+    if (gpbu.data.length > 0) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `${random.maskedString(
+          request.body.username
+        )} has been registered`,
       });
     }
   },

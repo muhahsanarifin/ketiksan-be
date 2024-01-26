@@ -15,12 +15,13 @@ const routes = (fastify, _, done) => {
     },
   });
   fastify.register(require("@fastify/middie"));
+
   fastify.register(authRouter, { prefix: "/auth" });
   fastify.register(articleRoute, { prefix: "/article" });
   fastify.register(formRoute, { prefix: "/form" });
   fastify.register(portofolioRoute, { prefix: "/portofolio" });
   fastify.register(userRoute, { prefix: "/user" });
-  fastify.register(categoryRoute, {prefix: "/category"});
+  fastify.register(categoryRoute, { prefix: "/category" });
   done();
 };
 
