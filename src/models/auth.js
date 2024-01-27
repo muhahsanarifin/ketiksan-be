@@ -5,6 +5,7 @@
 const pool = require("../config/postgre");
 const random = require("../helpers/random");
 const query = require("../db/auth");
+const { createProfile } = require("../db/user");
 
 module.exports = {
   login: async (data, token) => {
@@ -40,14 +41,24 @@ module.exports = {
           role_user || 3,
           1,
         ]),
-        (err, _) => {
+        (err, result) => {
           if (err) {
             return reject(err);
           }
-          return resolve({
-            status: "Successful",
-            msg: "Successful registered",
-          });
+
+          pool.query(
+            createProfile([result.rows[0].id, Date.now()]),
+            (err, _) => {
+              if (err) {
+                return reject(err);
+              }
+
+              return resolve({
+                status: "Successful",
+                msg: "Successful registered",
+              });
+            }
+          );
         }
       );
     });

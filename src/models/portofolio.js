@@ -1,5 +1,6 @@
 const pool = require("../config/postgre");
 const query = require("../db/portofolio");
+const value = require("../helpers/value");
 
 module.exports = {
   createPortofolio: async (body) => {
@@ -7,6 +8,7 @@ module.exports = {
       title,
       description,
       url_resource,
+      url_deploy,
       tech_used,
       category_portofolio_id,
     } = body;
@@ -16,6 +18,7 @@ module.exports = {
           title,
           description,
           url_resource,
+          url_deploy,
           tech_used,
           category_portofolio_id,
           Date.now(),
@@ -83,7 +86,7 @@ module.exports = {
                 return resolve({
                   status: "Successful",
                   msg: "Successful get data",
-                  data: rwsp.rows,
+                  data: value.data({ data: rwsp.rows }),
                   meta: { ...meta },
                 });
               }
@@ -92,7 +95,7 @@ module.exports = {
             return resolve({
               status: "Successful",
               msg: "Successful get data",
-              data: result.rows,
+              data: value.data({ data: rws.rows }),
             });
           }
         }
@@ -134,12 +137,14 @@ module.exports = {
     //   description,
     //   url_resource,
     //   tech_used,
+    //   url_deploy,
     //   category_portofolio_id,
     // } = body;
 
     // body.title = value.default(title, data.title);
     // body.description = value.default(description, data.description);
     // body.url_resource = value.default(url_resource, data.url_resource);
+    // body.url_deploy = value.default(url_deploy, data.url_deploy);
     // body.tech_used = value.default(tech_used, data.tech_used);
     // body.category_portofolio_id = value.default(
     //   category_portofolio_id,
@@ -147,22 +152,18 @@ module.exports = {
     // );
 
     //// Second approach
-    const values = {
-      title: body.title || data.title,
-      description: body.description || data.description,
-      url_resource: body.url_resource || data.url_resource,
-      tech_used: body.tech_used || data.tech_used,
-      category_portofolio_id:
-        body.category_portofolio_id || data.category_portofolio_id,
-    };
+    const values = [
+      body.title || data.title,
+      body.description || data.description,
+      body.url_resource || data.url_resource,
+      body.url_deploy || data.url_deploy,
+      body.tech_used || data.tech_used,
+      body.category_portofolio_id || data.category_portofolio_id,
+    ];
 
     return new Promise((resolve, reject) => {
       pool.query(
-        query.updatePortofolio([
-          params.id,
-          ...Object.values(values),
-          Date.now(),
-        ]),
+        query.updatePortofolio([+params.id, ...values, Date.now()]),
         (err, _) => {
           if (err) {
             return reject(err);
@@ -177,7 +178,7 @@ module.exports = {
   },
   deletePortofolioById: async (params) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.deletePortofolioById([params.id]), (err, result) => {
+      pool.query(query.deletePortofolioById([params.id]), (err, _) => {
         if (err) {
           return reject(err);
         }

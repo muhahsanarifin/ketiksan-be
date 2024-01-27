@@ -16,7 +16,12 @@ module.exports = {
 
       request.payload = decodedToken;
     } catch (error) {
-      reply.send(error);
+      reply.send({
+        code: error.code,
+        name: error.name,
+        status: error.statusCode,
+        msg: error.message,
+      });
     }
   },
   allowedByRoles: async (allowedByRoles, request, reply) => {

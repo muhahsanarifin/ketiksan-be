@@ -1,18 +1,36 @@
 const {
   getProfileByEmail,
-  getProfileByKSVUCode,
   getProfileByUsername,
+  getProfileByEKU,
 } = require("../models/user");
 const random = require("../helpers/random");
 const value = require("../helpers/value");
 
 module.exports = {
-  body: async (request, reply) => {
+  body: async (request, reply, allowedKeys) => {
     if (!request.body || Object.keys(request.body).length === 0) {
       reply.code(400).send({
         status: "Bad request",
         msg: "Request body is missing",
       });
+    }
+
+    if (allowedKeys.length !== 0) {
+      const sanitizedKey = Object.keys(request.body).filter((key) =>
+        allowedKeys.includes(key)
+      );
+
+      const newBody = {};
+      for (let key of sanitizedKey) {
+        Object.assign(newBody, {
+          [key]:
+            typeof request.body[key] === "string"
+              ? request.body[key].trim()
+              : request.body[key],
+        });
+      }
+
+      request.body = newBody;
     }
 
     if (Object.values(request.body).includes("")) {
@@ -109,21 +127,42 @@ module.exports = {
     }
   },
   login: async (request, reply) => {
-    const loginWith = request.query.with || "ksvu_code";
+    const loginWith =
+      request.query.with === "ksvu_code"
+        ? "u.ksvu_code"
+        : request.query.with === "email"
+        ? "u.email"
+        : request.query.with === "username"
+        ? "u.username"
+        : "u.ksvu_code";
 
-    if (loginWith === "email") {
-      const gtpbe = await getProfileByEmail(request.body);
+    const query = {
+      text:
+        "SELECT u.id, u.uuid, u.email, u.pass, u.username, u.ksvu_code, u.gender, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id WHERE " +
+        loginWith +
+        " = $1",
+      values:
+        request.body.ksvu_code || request.body.email || request.body.username,
+    };
 
-      if (gtpbe.data.length === 0) {
-        reply.code(400).send({
-          status: "Bad Request",
-          msg: `${random.maskedString(request.body.email)} is not registered`,
-        });
-      }
+    const gpbEKU = await getProfileByEKU({
+      ...query,
+    });
+
+    if (gpbEKU.data.length === 0) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `${random.maskedString(
+          request.body.ksvu_code || request.body.email || request.body.username
+        )} is not registered`,
+      });
+    }
+
+    if (request.query.with === "email" || request.query.with === "username") {
       const match = await value.compare(
         request,
         request.body.pass,
-        gtpbe.data[0].pass
+        gpbEKU.data[0].pass
       );
       if (!match) {
         reply.code(400).send({
@@ -133,40 +172,63 @@ module.exports = {
       }
     }
 
-    if (loginWith === "username") {
-      const gtpbu = await getProfileByUsername(request.body);
+    //// Another approach
+    // if (loginWith === "email") {
+    //   const gtpbe = await getProfileByEmail(request.body);
 
-      if (gtpbu.data.length === 0) {
-        reply.code(400).send({
-          status: "Bad Request",
-          msg: `${random.maskedString(
-            request.body.username
-          )} is not registered`,
-        });
-      }
-      const match = await value.compare(
-        request,
-        request.body.pass,
-        gtpbu.data[0].pass
-      );
-      if (!match) {
-        reply.code(400).send({
-          status: "Bad Request",
-          msg: "Wrong Password",
-        });
-      }
-    }
+    //   if (gtpbe.data.length === 0) {
+    //     reply.code(400).send({
+    //       status: "Bad Request",
+    //       msg: `${random.maskedString(request.body.email)} is not registered`,
+    //     });
+    //   }
+    //   const match = await value.compare(
+    //     request,
+    //     request.body.pass,
+    //     gtpbe.data[0].pass
+    //   );
+    //   if (!match) {
+    //     reply.code(400).send({
+    //       status: "Bad Request",
+    //       msg: "Wrong Password",
+    //     });
+    //   }
+    // }
 
-    if (loginWith === "ksvu_code") {
-      const gtpbk = await getProfileByKSVUCode(request.body);
-      if (gtpbk.data.length === 0) {
-        reply.code(400).send({
-          status: "Bad Request",
-          msg: `${random.maskedString(
-            request.body.ksvu_code
-          )} is not registered`,
-        });
-      }
-    }
+    // if (loginWith === "username") {
+    //   const gtpbu = await getProfileByUsername(request.body);
+
+    //   if (gtpbu.data.length === 0) {
+    //     reply.code(400).send({
+    //       status: "Bad Request",
+    //       msg: `${random.maskedString(
+    //         request.body.username
+    //       )} is not registered`,
+    //     });
+    //   }
+    //   const match = await value.compare(
+    //     request,
+    //     request.body.pass,
+    //     gtpbu.data[0].pass
+    //   );
+    //   if (!match) {
+    //     reply.code(400).send({
+    //       status: "Bad Request",
+    //       msg: "Wrong Password",
+    //     });
+    //   }
+    // }
+
+    // if (loginWith === "ksvu_code") {
+    //   const gtpbk = await getProfileByKSVUCode(request.body);
+    //   if (gtpbk.data.length === 0) {
+    //     reply.code(400).send({
+    //       status: "Bad Request",
+    //       msg: `${random.maskedString(
+    //         request.body.ksvu_code
+    //       )} is not registered`,
+    //     });
+    //   }
+    // }
   },
 };

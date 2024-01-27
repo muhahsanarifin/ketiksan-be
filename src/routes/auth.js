@@ -12,7 +12,16 @@ const authRouter = (fastify, _, done) => {
   });
   fastify.register((fastify, _, done) => {
     fastify.addHook("preHandler", async (request, reply) => {
-      await validate.body(request, reply);
+      await validate.body(request, reply, [
+        "email",
+        "username",
+        "gender",
+        "pass",
+        "confirmPass",
+        "job_title",
+        "current_company",
+        "role_user",
+      ]);
       await validate.register(request, reply);
     });
     fastify.post("/register", controller.register);
@@ -20,7 +29,7 @@ const authRouter = (fastify, _, done) => {
   });
   fastify.register((fastify, _, done) => {
     fastify.addHook("preHandler", async (request, reply) => {
-      await validate.body(request, reply);
+      await validate.body(request, reply, []);
       await validate.login(request, reply);
     });
     fastify.post("/login", controller.login);

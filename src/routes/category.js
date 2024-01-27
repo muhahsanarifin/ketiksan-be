@@ -8,11 +8,16 @@ const categoryRoute = (fastify, _, done) => {
       fastify.get("/", controller.getCategoryArticle);
       fastify.register((fastify, _, done) => {
         fastify.addHook("onRequest", async (request, reply) => {
-          await validate.body(request, reply);
           await check.access(request, reply);
           await check.allowedByRoles(["admin"], request, reply);
         });
-        fastify.post("/create", controller.createCategoryArticle);
+        fastify.register((fastify, _, done) => {
+          fastify.addHook("preHandler", async (request, reply) => {
+            await validate.body(request, reply, ["category"]);
+          });
+          fastify.post("/create", controller.createCategoryArticle);
+          done();
+        });
         fastify.patch("/:id/update", controller.updateCategoryArticle);
         fastify.delete("/:id/delete", controller.deleteCategoryArticle);
         done();
@@ -26,11 +31,16 @@ const categoryRoute = (fastify, _, done) => {
       fastify.get("/", controller.getCategoryPortofolio);
       fastify.register((fastify, _, done) => {
         fastify.addHook("onRequest", async (request, reply) => {
-          await validate.body(request, reply);
           await check.access(request, reply);
           await check.allowedByRoles(["admin", request, reply]);
         });
-        fastify.post("/create", controller.createCategoryPortofolio);
+        fastify.register((fastify, _, done) => {
+          fastify.addHook("preHandler", async (request, reply) => {
+            await validate.body(request, reply, ["category"]);
+          });
+          fastify.post("/create", controller.createCategoryPortofolio);
+          done();
+        });
         fastify.patch("/:id/update", controller.updateCategoryPortofolio);
         fastify.delete("/:id/delete", controller.deleteCategoryPortofolio);
         done();

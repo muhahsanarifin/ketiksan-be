@@ -25,7 +25,7 @@ module.exports = {
   },
   updateArticle: (values) => {
     return {
-      text: "UPDATE SET $2 = title, $3 = description, author = $4, category_article_id = $5, update_at = $6 WHERE id = $1",
+      text: "UPDATE article SET title = $2, description = $3, author = $4, category_article_id = $5, updated_at = $6 WHERE id = $1",
       values: values,
     };
   },

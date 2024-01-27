@@ -1,6 +1,6 @@
 module.exports = {
   default: (value, exist) => {
-    return value ? value : exist;
+    return value.length !== 0 ? value : exist;
   },
   hash: async (request, pass) => {
     const hash = await request.bcryptHash(pass);
@@ -32,5 +32,17 @@ module.exports = {
     if (+id) {
       return "Miss";
     }
+  },
+  data: ({ data }) => {
+    const stringToArray = (str) => {
+      return str.trim().replaceAll(",", "").split(" ");
+    };
+
+    return data.map((val) => {
+      return {
+        ...val,
+        url_resource: stringToArray(val.url_resource),
+      };
+    });
   },
 };

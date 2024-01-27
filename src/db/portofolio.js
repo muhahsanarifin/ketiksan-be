@@ -1,7 +1,7 @@
 module.exports = {
   createPortofolio: (values) => {
     return {
-      text: "INSERT INTO portofolio (title, description, url, resource, tech_used, category_portofolio_id, crated_at) VALUES ($1, $2, $3, $4, $5, $6. $7)",
+      text: "INSERT INTO portofolio (title, description, url_resource, url_deploy, tech_used, category_portofolio_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
       values: values,
     };
   },
@@ -25,7 +25,7 @@ module.exports = {
   },
   updatePortofolio: (values) => {
     return {
-      text: "UPDATE SET title = $2, description = $3, url_resource = $4, tech_used = $5, category_portofolio_id = $6, updated_at = $7 WHERE id = $1",
+      text: "UPDATE portofolio SET title = $2, description = $3, url_resource = $4, url_deploy = $5, tech_used = $6, category_portofolio_id = $7, updated_at = $8 WHERE id = $1",
       values: values,
     };
   },

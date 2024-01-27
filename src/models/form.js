@@ -1,6 +1,7 @@
 const pool = require("../config/postgre");
 const random = require("../helpers/random");
 const query = require("../db/form");
+const { createProfile } = require("../db/user");
 
 module.exports = {
   //// Biodata
@@ -27,7 +28,7 @@ module.exports = {
           }
 
           pool.query(
-            query.createProfile([result.rows[0].id, Date.now()]),
+            createProfile([result.rows[0].id, Date.now()]),
             (err, _) => {
               if (err) {
                 return reject(err);

@@ -6,12 +6,6 @@ module.exports = {
       values: values,
     };
   },
-  createProfile: (values) => {
-    return {
-      text: "INSERT INTO profile (user_id, created_at) VALUES ($1, $2)",
-      values: values,
-    };
-  },
   deleteBioById: (text, values) => {
     return {
       text: text,

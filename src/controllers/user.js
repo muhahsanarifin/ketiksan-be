@@ -23,7 +23,7 @@ module.exports = {
   getProfileById: async (request, reply) => {
     try {
       const response = await model.getProfileById(request.payload);
-      reply.code(200).send(response);
+      reply.code(200).send({ ...response, data: response.data[0] });
     } catch (error) {
       reply.code(500).send({
         status: "Server Error",
@@ -33,7 +33,7 @@ module.exports = {
   },
   statusAccount: async (request, reply) => {
     try {
-      const response = await model.profileById(request.params);
+      const response = await model.statusAccount(request.body, request.params);
       reply.code(200).send(response);
     } catch (error) {
       reply.code(500).send({

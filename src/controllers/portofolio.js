@@ -51,7 +51,7 @@ module.exports = {
       const response = await model.updatePortofolio(
         request.body,
         request.params,
-        apv[0]
+        apv.data
       );
       reply.code(201).send(response);
     } catch (error) {

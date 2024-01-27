@@ -106,23 +106,23 @@ module.exports = {
       });
     });
   },
-  getProfileByKSVUCode: async (body) => {
-    return new Promise((resolve, reject) => {
-      pool.query(
-        query.getProfileByKSVUCode([body.ksvu_code]),
-        (err, result) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve({
-            status: "Successful",
-            msg: "Successful get data",
-            data: result.rows,
-          });
-        }
-      );
-    });
-  },
+  // getProfileByKSVUCode: async (body) => {
+  //   return new Promise((resolve, reject) => {
+  //     pool.query(
+  //       query.getProfileByKSVUCode([body.ksvu_code]),
+  //       (err, result) => {
+  //         if (err) {
+  //           return reject(err);
+  //         }
+  //         return resolve({
+  //           status: "Successful",
+  //           msg: "Successful get data",
+  //           data: result.rows,
+  //         });
+  //       }
+  //     );
+  //   });
+  // },
   getProfileByUsername: async (body) => {
     return new Promise((resolve, reject) => {
       pool.query(query.getProfileByUsername([body.username]), (err, result) => {
@@ -137,6 +137,21 @@ module.exports = {
       });
     });
   },
+  getProfileByEKU: async ({ text, values }) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getProfileByEKU(text, [values]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
+        });
+      });
+    });
+  },
+
   //// Approach with params.id || payload.uuid || id
   updateProfileById: async ({ text, params = "", payload = "", id = "" }) => {
     return new Promise((resolve, reject) => {
@@ -157,10 +172,10 @@ module.exports = {
       );
     });
   },
-  statusAccount: async (body) => {
+  statusAccount: async (body, params) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        query.statusAccount([body.status_account, Date.now()]),
+        query.statusAccount([params.id, body.status_account, Date.now()]),
         (err, _) => {
           if (err) {
             return reject(err);

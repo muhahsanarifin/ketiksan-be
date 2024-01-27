@@ -93,14 +93,14 @@ module.exports = {
   },
   getArticleById: async (params) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.getArticleById([params.id]), (err, result) => {
+      pool.query(query.getArticleById([+params.id]), (err, result) => {
         if (err) {
           return reject(err);
         }
         return resolve({
           status: "Successful",
           msg: "Successful get data",
-          data: result.rows,
+          data: result.rows[0],
         });
       });
     });
@@ -120,14 +120,16 @@ module.exports = {
     });
   },
   updateArticle: async (body, params, data) => {
-    const values = {
-      title: body.title || data.title,
-      description: body.description || data.description,
-      category_article_id: body.category_article_id || data.category_article_id,
-    };
+    const values = [
+      body.title || data.title,
+      body.description || data.description,
+      body.author || data.author,
+      body.category_article_id || data.category_article_id,
+    ];
+
     return new Promise((resolve, reject) => {
       pool.query(
-        query.updateArticle([params.id, ...Object.values(values), Date.now()]),
+        query.updateArticle([params.id, ...values, Date.now()]),
         (err, _) => {
           if (err) {
             return reject(err);

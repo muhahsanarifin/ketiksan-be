@@ -52,7 +52,7 @@ module.exports = {
       const response = await model.updateArticle(
         request.body,
         request.params,
-        aap[0]
+        aap.data
       );
 
       reply.code(201).send(response);

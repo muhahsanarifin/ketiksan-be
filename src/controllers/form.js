@@ -6,16 +6,7 @@ module.exports = {
     try {
       const response = await model.createBio(request.body);
 
-      // const response = Promise.all([
-      //   model.createBio(request.body),
-      //   mailer({
-      //     to: request.body.email,
-      //     text: "Thank you!",
-      //     subject: "Ketik san test!",
-      //   }),
-      // ]);
-
-      request.bioResponse = response
+      request.bioResponse = response;
 
       reply.code(201).send(response);
     } catch (error) {

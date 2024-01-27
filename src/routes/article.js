@@ -13,6 +13,12 @@ const articleRoute = (fastify, _, done) => {
     });
     fastify.register((fastify, _, done) => {
       fastify.addHook("preHandler", async (request, reply) => {
+        await validate.body(request, reply, [
+          "title",
+          "description",
+          "author",
+          "category_article_id",
+        ]);
         await validate.duplicate(request, reply, getTitleArticle(request.body));
       });
       fastify.post("/create", controller.createArticle);
