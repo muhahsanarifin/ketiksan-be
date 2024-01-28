@@ -1,19 +1,11 @@
 # Module
 node_modules
 
-# Package JSON
-package-lock.json
-package.json
-
 # Env
 .env
-
-# Middlewares
-src/middlewares
 
 # helpers
 src/helpers/response.js
 
-# Auth
-src/controllers/auth.js
-src/db/auth.js
+# Archive
+src/archive
