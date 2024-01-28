@@ -9,3 +9,6 @@ src/helpers/response.js
 
 # Archive
 src/archive
+
+# Index
+index.js
