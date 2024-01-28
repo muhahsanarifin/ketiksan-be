@@ -3,7 +3,7 @@
 require("dotenv").config();
 const Fastify = require("fastify");
 const cors = require("@fastify/cors");
-const routes = require("./src/routes/index");
+const routes = require("../src/routes/index");
 const { fastifyMailer } = require("../src/config/nodemailer");
 
 const fastify = Fastify({
