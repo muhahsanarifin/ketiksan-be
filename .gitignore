@@ -11,8 +11,5 @@ src/helpers/logger.js
 # Archive
 src/archive
 
-# Index
-index.js
-
-# App
-app.js
+# Server
+server.js
