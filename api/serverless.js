@@ -1,6 +1,9 @@
+"use strict";
+
 require("dotenv").config();
 const Fastify = require("fastify");
 const cors = require("@fastify/cors");
+const routes = require("./src/routes/index");
 const { fastifyMailer } = require("../src/config/nodemailer");
 
 const fastify = Fastify({
@@ -20,7 +23,7 @@ fastify.register(cors, {
   origin: process.env.BASE_URL,
 });
 fastify.register(require("@fastify/formbody"));
-fastify.register(require("../app"));
+fastify.register(routes);
 
 export default async (req, res) => {
   await fastify.ready();

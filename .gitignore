@@ -6,9 +6,13 @@ node_modules
 
 # helpers
 src/helpers/response.js
+src/helpers/logger.js
 
 # Archive
 src/archive
 
 # Index
 index.js
+
+# App
+app.js
