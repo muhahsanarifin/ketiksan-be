@@ -22,6 +22,13 @@ const routes = (fastify, _, done) => {
   fastify.register(portofolioRoute, { prefix: "/portofolio" });
   fastify.register(userRoute, { prefix: "/user" });
   fastify.register(categoryRoute, { prefix: "/category" });
+
+  fastify.get("/", (_, reply) => {
+    reply.code(200).send({
+      msg: "ketiksan api.",
+      description: "ketiksan dibangun menggunakan framework node.js (fastify)."
+    });
+  });
   done();
 };
 
