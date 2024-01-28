@@ -30,6 +30,12 @@ const start = async () => {
       port: process.env.FASTIFY_PORT || 3000,
     });
     fastify.log.info(`server listening on ${address}`);
+
+    async (req, res) => {
+      await fastify.ready();
+      fastify.server.emit("request", req, res);
+    };
+
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
