@@ -175,7 +175,7 @@ module.exports = {
   statusAccount: async (body, params) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        query.statusAccount([params.id, body.status_account, Date.now()]),
+        query.statusAccount([payload.id, body.status_account, Date.now()]),
         (err, _) => {
           if (err) {
             return reject(err);

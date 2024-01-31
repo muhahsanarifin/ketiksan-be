@@ -50,7 +50,10 @@ module.exports = {
 
     return new Promise((resolve, reject) => {
       pool.query(
-        query.getArticle("SELECT * FROM article" + sorting),
+        query.getArticle(
+          "SELECT a.id, a.title, a.description, a.author, a.category_article_id, ca.category AS category_article, a.created_at, a.updated_at FROM article a LEFT JOIN category_article ca ON a.category_article_id  = ca.id" +
+            sorting
+        ),
         (err, rws) => {
           //// rws = result with sorting
           if (err) {
@@ -59,7 +62,11 @@ module.exports = {
 
           if (page && results_per_page) {
             pool.query(
-              query.getArticle("SELECT * FROM article" + sorting + pagination),
+              query.getArticle(
+                "SELECT a.id, a.title, a.description, a.author, a.category_article_id, ca.category AS category_article, a.created_at, a.updated_at FROM article a LEFT JOIN category_article ca ON a.category_article_id  = ca.id" +
+                  sorting +
+                  pagination
+              ),
               (err, rwsp) => {
                 //// rwsp = result with sorting pagination
                 if (err) {

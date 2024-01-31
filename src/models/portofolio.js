@@ -58,7 +58,10 @@ module.exports = {
 
     return new Promise((resolve, reject) => {
       pool.query(
-        query.getPortofolio("SELECT * FROM portofolio" + sorting),
+        query.getPortofolio(
+          "SELECT p.id, p.title, p.description, p.url_resource, p.tech_used , p.category_portofolio_id, cp.category AS category_portofolio, p.url_deploy , p.created_at, p.updated_at FROM portofolio p LEFT JOIN category_portofolio cp ON category_portofolio_id  = cp.id" +
+            sorting
+        ),
         (err, rws) => {
           //// rws = result with sorting
           if (err) {
@@ -68,7 +71,9 @@ module.exports = {
           if (page && results_per_page) {
             pool.query(
               query.getPortofolio(
-                "SELECT * FROM portofolio" + sorting + pagination
+                "SELECT p.id, p.title, p.description, p.url_resource, p.tech_used , p.category_portofolio_id, cp.category AS category_portofolio, p.url_deploy , p.created_at, p.updated_at FROM portofolio p LEFT JOIN category_portofolio cp ON category_portofolio_id  = cp.id" +
+                  sorting +
+                  pagination
               ),
               (err, rwsp) => {
                 //// rwsp = result with sorting pagination

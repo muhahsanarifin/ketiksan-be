@@ -33,7 +33,7 @@ module.exports = {
   },
   statusAccount: async (request, reply) => {
     try {
-      const response = await model.statusAccount(request.body, request.params);
+      const response = await model.statusAccount(request.body, request.payload);
       reply.code(200).send(response);
     } catch (error) {
       reply.code(500).send({
