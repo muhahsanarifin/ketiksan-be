@@ -6,6 +6,7 @@ const pinoPretty = {
       ignore: "pid,hostname",
     },
   },
+  production: true,
 };
 
 module.exports = pinoPretty;
