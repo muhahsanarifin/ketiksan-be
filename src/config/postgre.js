@@ -1,11 +1,9 @@
 const { Pool } = require("pg");
 
+const connectionString = `postgres://${process.env.KETIKSAN_DATABASE_USER}:${process.env.KETIKSAN_DATABASE_PASSWORD}@${process.env.KETIKSAN_DATABASE_HOST}:${process.env.KETIKSAN_DATABASE_PORT}/${process.env.KETIKSAN_DATABASE_NAME}`;
+
 const pool = new Pool({
-  user: process.env.KETIKSAN_DATABASE_USER,
-  host: process.env.KETIKSAN_DATABASE_HOST,
-  database: process.env.KETIKSAN_DATABASE_DATABASE,
-  password: process.env.KETIKSAN_DATABASE_PASSWORD,
-  port: process.env.KETIKSAN_DATABASE_PORT,
+  connectionString,
 });
 
 module.exports = pool;

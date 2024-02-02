@@ -4,11 +4,10 @@ require("dotenv").config();
 const Fastify = require("fastify");
 const cors = require("@fastify/cors");
 const routes = require("../src/routes/index");
-const pinoPretty = require("../src/helpers/logger");
 const { fastifyMailer } = require("../src/config/nodemailer");
 
 const fastify = Fastify({
-  logger: pinoPretty ?? true,
+  logger: true,
 });
 
 fastify.register(require("fastify-mailer"), {
