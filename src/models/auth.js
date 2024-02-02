@@ -3,9 +3,9 @@
  */
 
 const pool = require("../config/postgre");
-const random = require("../helpers/random");
 const query = require("../db/auth");
 const { createProfile } = require("../db/user");
+const random = require("../helpers/random");
 
 module.exports = {
   login: async (data, token) => {
@@ -25,7 +25,7 @@ module.exports = {
     });
   },
   register: async (body, hash) => {
-    const { email, username, gender, job_title, current_company, role_user } =
+    const { email, username, fullname, job_title, current_company, role_user } =
       body;
     return new Promise((resolve, reject) => {
       pool.query(
@@ -35,7 +35,7 @@ module.exports = {
           username,
           hash,
           random.ksvucode(),
-          gender,
+          fullname,
           job_title || "",
           current_company || "",
           role_user || 3,
@@ -90,30 +90,89 @@ module.exports = {
       });
     });
   },
-  forget: async () => {
+
+  changePassword: async (data, hash) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.forgetKSVUCode(), (err, result) => {
+      pool.query(query.changePassword([data.uuid, hash]), (err, _) => {
         if (err) {
           return reject(err);
         }
+        return resolve({
+          status: "Successful",
+          msg: "Successful change password",
+        });
       });
     });
   },
-  reset: async (query) => {
+
+  forgetKsvuCode: async (body) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.resetKSVUCode(), (err, result) => {
-        if (err) {
-          return reject(err);
+      pool.query(
+        query.forgetKsvuCode([body.email, random.key()]),
+        (err, result) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            status: "Successful",
+            msg: "Successful updated",
+            data: result.rows[0],
+          });
         }
-      });
+      );
     });
   },
-  change: async () => {
+
+  resetKsvuCode: async (data) => {
     return new Promise((resolve, reject) => {
-      pool.query(query.changeKSVUCode(), (err, result) => {
+      pool.query(
+        query.resetKsvuCode([data.email, data.key_reset, random.ksvucode()]),
+        (err, result) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            status: "Successful",
+            msg: `Successful reset KSVU Code. Please, check via ${random.maskedString(
+              data.email
+            )}`,
+            data: result.rows[0],
+          });
+        }
+      );
+    });
+  },
+
+  //// Reset key
+  resetKey: async (data) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        query.resetKey([data.email, data.key_reset, ""]),
+        (err, result) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            status: "Successful",
+            msg: "Successful reset key reset code",
+            data: result.rows[0],
+          });
+        }
+      );
+    });
+  },
+
+  verifyResetKey: async (body) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.verifyResetKey([body.key_reset]), (err, result) => {
         if (err) {
           return reject(err);
         }
+        return resolve({
+          status: "Successful",
+          msg: "Successful verify reset key",
+          data: result.rows,
+        });
       });
     });
   },

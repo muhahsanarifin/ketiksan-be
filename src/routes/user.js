@@ -1,5 +1,6 @@
 const controller = require("../controllers/user");
 const check = require("../middlewares/check");
+const validate = require("../middlewares/validate");
 
 const userRoute = (fastify, _, done) => {
   fastify.register((fastify, _, done) => {
@@ -7,7 +8,8 @@ const userRoute = (fastify, _, done) => {
       await check.access(request, reply);
       await check.allowedByRoles(["admin"], request, reply);
     });
-    fastify.get("/", controller.getProfile);
+    fastify.get("/", controller.getUser);
+    fastify.get("/:id", controller.getUserById);
     done();
   });
   fastify.register(
@@ -17,6 +19,7 @@ const userRoute = (fastify, _, done) => {
         await check.allowedByRoles(["admin", "recruiter"], request, reply);
       });
       fastify.get("/detail", controller.getProfileById);
+      fastify.patch("/update", controller.updateProfileId);
       done();
     },
     { prefix: "/profile" }

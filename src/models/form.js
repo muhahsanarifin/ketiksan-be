@@ -6,7 +6,7 @@ const { createProfile } = require("../db/user");
 module.exports = {
   //// Biodata
   createBio: async (body) => {
-    const { email, username, gender, job_title, current_company, role_user } =
+    const { email, username, fullname, job_title, current_company } =
       body;
 
     return new Promise((resolve, reject) => {
@@ -15,11 +15,11 @@ module.exports = {
           random.uuid(),
           email,
           username,
+          fullname,
           random.ksvucode(),
-          gender,
           job_title,
           current_company,
-          role_user || 3,
+          2,
           1,
         ]),
         (err, result) => {
@@ -39,7 +39,7 @@ module.exports = {
                 msg: "Successful Created",
                 data: {
                   ksvu_code: result.rows[0].ksvu_code,
-                  gender: result.rows[0].gender,
+                  fullname: result.rows[0].fullname,
                 },
               });
             }

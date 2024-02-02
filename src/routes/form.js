@@ -2,7 +2,6 @@ const controller = require("../controllers/form");
 const check = require("../middlewares/check");
 const validate = require("../middlewares/validate");
 const { mailer, html } = require("../helpers/mailer");
-const value = require("../helpers/value");
 
 const formRoute = (fastify, _, done) => {
   //// Bio
@@ -10,6 +9,13 @@ const formRoute = (fastify, _, done) => {
     (fastify, _, done) => {
       fastify.register((fastify, _, done) => {
         fastify.addHook("preHandler", async (request, reply) => {
+          await validate.body(request, reply, [
+            "email",
+            "username",
+            "fullname",
+            "job_title",
+            "current_company",
+          ]);
           await validate.collect(request, reply);
         });
         fastify.addHook("onResponse", async (request, _) => {
@@ -18,10 +24,8 @@ const formRoute = (fastify, _, done) => {
               to: request.body.email,
               subject: `ketiksan | Thanks.`,
               html: html({
-                title: `Hi ${value.gender(
-                  request.bioResponse.data.gender
-                )}. Thanks for your interested to visit ketiksan.`,
-                description: `<span style="font-weight: bold;">(${request.bioResponse.data.ksvu_code})</span> your unique code that you can use to access feed, etc site of ketiksan.`,
+                title: `Hi, ${request.bioResponse.data.fullname}. Thanks for your interested to visit ketiksan.`,
+                description: `<span style="font-weight: bold;">(${request.bioResponse.data.ksvu_code})</span> you can use it to access feed, etc site of ketiksan.`,
               }),
             },
             fastify

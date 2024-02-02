@@ -22,4 +22,10 @@ module.exports = {
     });
     return output;
   },
+  key: () => {
+    return randomstring.generate({
+      length: 4,
+      charset: "numeric",
+    });
+  },
 };

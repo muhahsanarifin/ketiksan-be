@@ -2,7 +2,9 @@ const {
   getProfileByEmail,
   getProfileByUsername,
   getProfileByEKU,
+  getPasswordById,
 } = require("../models/user");
+const { verifyResetKey } = require("../models/auth");
 const random = require("../helpers/random");
 const value = require("../helpers/value");
 
@@ -138,7 +140,7 @@ module.exports = {
 
     const query = {
       text:
-        "SELECT u.id, u.uuid, u.email, u.pass, u.username, u.ksvu_code, u.gender, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id WHERE " +
+        "SELECT u.id, u.uuid, u.email, u.pass, u.username, u.fullname, u.ksvu_code, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id WHERE " +
         loginWith +
         " = $1",
       values:
@@ -230,5 +232,47 @@ module.exports = {
     //     });
     //   }
     // }
+  },
+  forgetKsvuCode: async (request, reply) => {
+    const gpbe = await getProfileByEmail(request.body);
+    if (gpbe.data.length === 0) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `${random.maskedString(request.body.email)} is not registered`,
+      });
+    }
+  },
+  resetKsvuCode: async (request, reply) => {
+    const verifyResponse = await verifyResetKey(request.body);
+
+    if (verifyResponse.data.length === 0) {
+      reply.code(400).send({
+        status: "Bad Request",
+        msg: `Your reset code input is wrong, Please check again.`,
+      });
+    }
+
+    request.verifyResponseData = verifyResponse.data[0];
+  },
+  changePassword: async (request, reply) => {
+    try {
+      //// Get curren hash pass by id
+      const getCurrentHashPassById = await getPasswordById(request.payload);
+
+      const matchPass = await value.compare(
+        request,
+        request.body.pass,
+        getCurrentHashPassById.data[0].pass
+      );
+
+      if (!matchPass) {
+        reply.code(400).send({
+          status: "Bad Request",
+          msg: "Wrong password",
+        });
+      }
+    } catch (error) {
+      reply.code(400).send(error);
+    }
   },
 };

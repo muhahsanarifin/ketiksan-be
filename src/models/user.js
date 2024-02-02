@@ -1,8 +1,9 @@
 const pool = require("../config/postgre");
 const query = require("../db/user");
+const random = require("../helpers/random");
 
 module.exports = {
-  getProfile: async (q) => {
+  getUser: async (q) => {
     const page = q.page || "";
     const results_per_page = q.limit || "";
     const sort_by = q.sort_by || "created_at";
@@ -28,8 +29,8 @@ module.exports = {
 
     return new Promise((resolve, reject) => {
       pool.query(
-        query.getProfile(
-          "SELECT u.id, u.uuid, u.email, u.username, u.ksvu_code, u.gender, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id" +
+        query.getUser(
+          "SELECT u.id, u.uuid, u.email, u.username, u.fullname, u.ksvu_code, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id" +
             sorting
         ),
         (err, rws) => {
@@ -41,8 +42,8 @@ module.exports = {
           //// If value page and limit query does exist.
           if (+page && +results_per_page) {
             pool.query(
-              query.getProfile(
-                "SELECT u.id, u.uuid, u.email, u.username, u.ksvu_code, u.gender, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id" +
+              query.getUser(
+                "SELECT u.id, u.uuid, u.email, u.username, u.fullname, u.ksvu_code, u.job_title, u.current_company, u.role_user, u.status_account, p.created_at, p.updated_at, p.first_login_at, p.last_login_at, p.active_login_at FROM users u LEFT JOIN profile p ON u.id = p.user_id" +
                   sorting +
                   pagination
               ),
@@ -78,6 +79,20 @@ module.exports = {
       );
     });
   },
+  getUserById: async (params) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getProfileById([params.id]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
+        });
+      });
+    });
+  },
   getProfileById: async (payload) => {
     return new Promise((resolve, reject) => {
       pool.query(query.getProfileById([payload.uuid]), (err, result) => {
@@ -106,23 +121,6 @@ module.exports = {
       });
     });
   },
-  // getProfileByKSVUCode: async (body) => {
-  //   return new Promise((resolve, reject) => {
-  //     pool.query(
-  //       query.getProfileByKSVUCode([body.ksvu_code]),
-  //       (err, result) => {
-  //         if (err) {
-  //           return reject(err);
-  //         }
-  //         return resolve({
-  //           status: "Successful",
-  //           msg: "Successful get data",
-  //           data: result.rows,
-  //         });
-  //       }
-  //     );
-  //   });
-  // },
   getProfileByUsername: async (body) => {
     return new Promise((resolve, reject) => {
       pool.query(query.getProfileByUsername([body.username]), (err, result) => {
@@ -151,9 +149,43 @@ module.exports = {
       });
     });
   },
-
+  getPasswordById: async (data) => {
+    return new Promise((resolve, reject) => {
+      pool.query(query.getPasswordById([data.uuid]), (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          status: "Successful",
+          msg: "Successful get data",
+          data: result.rows,
+        });
+      });
+    });
+  },
+  updateProfileById: async ({ body, payload, data }) => {
+    const values = [
+      body.fullname || data.fullname,
+      body.job_title || data.job_title,
+      body.current_company || data.current_company,
+    ];
+    return new Promise((resolve, reject) => {
+      pool.query(
+        query.updateProfileById("UPDATE users SET fullname = $2, job_title = $3, current_company = $4 WHERE uuid = $1", [payload.uuid, ...values]),
+        (err, _) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            status: "Successful",
+            msg: "Successful updated",
+          });
+        }
+      );
+    });
+  },
   //// Approach with params.id || payload.uuid || id
-  updateProfileById: async ({ text, params = "", payload = "", id = "" }) => {
+  updateDateProfileById: async ({ text, params = "", payload = "", id = "" }) => {
     return new Promise((resolve, reject) => {
       pool.query(
         query.updateProfileById(text, [
@@ -172,7 +204,7 @@ module.exports = {
       );
     });
   },
-  statusAccount: async (body, params) => {
+  statusAccount: async (body, payload) => {
     return new Promise((resolve, reject) => {
       pool.query(
         query.statusAccount([payload.id, body.status_account, Date.now()]),
