@@ -1,10 +1,11 @@
-const model = require("../models/article");
+const uploadWithCloudinary = require("../helpers/cloudinary");
+
+const model = require("../models/identity");
 
 module.exports = {
-  createArticle: async (request, reply) => {
+  createIdentity: async (request, reply) => {
     try {
-      const response = await model.createArticle(request.body);
-
+      const response = await model.createIdentity(request.body);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -13,10 +14,9 @@ module.exports = {
       });
     }
   },
-  getArticle: async (request, reply) => {
+  getIdentity: async (request, reply) => {
     try {
-      const response = await model.getArticle(request.query);
-
+      const response = await model.getIdentity(request.query);
       if (response.data.length === 0) {
         reply.code(200).send({
           status: "Seccessful",
@@ -33,27 +33,16 @@ module.exports = {
       });
     }
   },
-  getArticleById: async (request, reply) => {
+  updateIdentity: async (request, reply) => {
     try {
-      const response = await model.getArticleById(request.params);
-      reply.code(200).send(response);
-    } catch (error) {
-      reply.code(500).send({
-        status: "Server Error",
-        msg: error?.message || "Internal Server Error",
-      });
-    }
-  },
-  updateArticle: async (request, reply) => {
-    try {
-      //// aad = available article data
-      const aad = await model.getArticleById(request.params);
+      //// aid = available identity data
+      const aid = await model.getIdentityById(request.params);
 
-      const response = await model.updateArticle(
-        request.body,
-        request.params,
-        aad.data
-      );
+      const response = await model.updateIdentity({
+        body: request.body,
+        params: request.params,
+        data: aid.data[0],
+      });
 
       reply.code(201).send(response);
     } catch (error) {
@@ -63,9 +52,27 @@ module.exports = {
       });
     }
   },
-  deleteArticleById: async (request, reply) => {
+  updateIdentityPicture: async (request, reply) => {
     try {
-      const response = await model.deleteArticleById(request.params);
+      const file = await uploadWithCloudinary({
+        name: `kip-${request.params.id}`,
+        folder: process.env.KETIKSAN_CLOUDINARY_FOLDER,
+        file: request.file,
+      });
+
+      const response = await model.updateIdentityPicture(request.params, file);
+
+      reply.code(201).send(response);
+    } catch (error) {
+      reply.code(500).send({
+        status: "Server Error",
+        msg: error?.message || "Internal Server Error",
+      });
+    }
+  },
+  deleteIdentity: async (request, reply) => {
+    try {
+      const response = await model.deleteIdentity(request.params);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({

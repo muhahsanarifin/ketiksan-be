@@ -1,10 +1,9 @@
-const model = require("../models/article");
+const model = require("../models/skills");
 
 module.exports = {
-  createArticle: async (request, reply) => {
+  createSkills: async (request, reply) => {
     try {
-      const response = await model.createArticle(request.body);
-
+      const response = await model.createSkills(request.body);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -13,10 +12,9 @@ module.exports = {
       });
     }
   },
-  getArticle: async (request, reply) => {
+  getSkills: async (request, reply) => {
     try {
-      const response = await model.getArticle(request.query);
-
+      const response = await model.getSkills(request.query);
       if (response.data.length === 0) {
         reply.code(200).send({
           status: "Seccessful",
@@ -33,10 +31,10 @@ module.exports = {
       });
     }
   },
-  getArticleById: async (request, reply) => {
+  getSkillsById: async (request, reply) => {
     try {
-      const response = await model.getArticleById(request.params);
-      reply.code(200).send(response);
+      const response = await model.getSkillsById(request.params);
+      reply.code(200).send({ ...response, data: response.data[0] });
     } catch (error) {
       reply.code(500).send({
         status: "Server Error",
@@ -44,15 +42,15 @@ module.exports = {
       });
     }
   },
-  updateArticle: async (request, reply) => {
+  updateSkills: async (request, reply) => {
     try {
-      //// aad = available article data
-      const aad = await model.getArticleById(request.params);
+      //// asd = available skills data
+      const asd = await model.updateSkills(request.params);
 
       const response = await model.updateArticle(
         request.body,
         request.params,
-        aad.data
+        asd.data[0]
       );
 
       reply.code(201).send(response);
@@ -63,9 +61,9 @@ module.exports = {
       });
     }
   },
-  deleteArticleById: async (request, reply) => {
+  deleteSkills: async (request, reply) => {
     try {
-      const response = await model.deleteArticleById(request.params);
+      const response = await model.deleteSkills(request.params);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({

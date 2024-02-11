@@ -1,10 +1,10 @@
-const model = require("../models/article");
+const { updateCourseWork } = require("../db/coursework");
+const model = require("../models/coursework");
 
 module.exports = {
-  createArticle: async (request, reply) => {
+  createCourseWork: async (request, reply) => {
     try {
-      const response = await model.createArticle(request.body);
-
+      const response = await model.createCourseWork(request.body);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -13,10 +13,9 @@ module.exports = {
       });
     }
   },
-  getArticle: async (request, reply) => {
+  getCourseWork: async (request, reply) => {
     try {
-      const response = await model.getArticle(request.query);
-
+      const response = await model.getCoursework(request.query);
       if (response.data.length === 0) {
         reply.code(200).send({
           status: "Seccessful",
@@ -33,10 +32,10 @@ module.exports = {
       });
     }
   },
-  getArticleById: async (request, reply) => {
+  getCourseWorkById: async (request, reply) => {
     try {
-      const response = await model.getArticleById(request.params);
-      reply.code(200).send(response);
+      const response = await model.getCourseWorkById(request.params);
+      reply.code(200).send({ ...response, data: response.data[0] });
     } catch (error) {
       reply.code(500).send({
         status: "Server Error",
@@ -44,15 +43,15 @@ module.exports = {
       });
     }
   },
-  updateArticle: async (request, reply) => {
+  updateCourseWork: async (request, reply) => {
     try {
-      //// aad = available article data
-      const aad = await model.getArticleById(request.params);
+      //// acd = available coursework data
+      const acd = await model.getCourseWorkById(request.params);
 
-      const response = await model.updateArticle(
+      const response = await model.updateCourseWork(
         request.body,
         request.params,
-        aad.data
+        acd.data[0]
       );
 
       reply.code(201).send(response);
@@ -63,9 +62,9 @@ module.exports = {
       });
     }
   },
-  deleteArticleById: async (request, reply) => {
+  deleteCourseWork: async (request, reply) => {
     try {
-      const response = await model.deleteArticleById(request.params);
+      const response = await model.deleteCourseWork(request.params);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({

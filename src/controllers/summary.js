@@ -1,10 +1,9 @@
-const model = require("../models/article");
+const model = require("../models/summary");
 
 module.exports = {
-  createArticle: async (request, reply) => {
+  createSummary: async (request, reply) => {
     try {
-      const response = await model.createArticle(request.body);
-
+      const response = await model.createSummary(request.body);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
@@ -13,10 +12,9 @@ module.exports = {
       });
     }
   },
-  getArticle: async (request, reply) => {
+  getSummary: async (request, reply) => {
     try {
-      const response = await model.getArticle(request.query);
-
+      const response = await model.getSummary(request.query);
       if (response.data.length === 0) {
         reply.code(200).send({
           status: "Seccessful",
@@ -33,26 +31,15 @@ module.exports = {
       });
     }
   },
-  getArticleById: async (request, reply) => {
+  updateSummary: async (request, reply) => {
     try {
-      const response = await model.getArticleById(request.params);
-      reply.code(200).send(response);
-    } catch (error) {
-      reply.code(500).send({
-        status: "Server Error",
-        msg: error?.message || "Internal Server Error",
-      });
-    }
-  },
-  updateArticle: async (request, reply) => {
-    try {
-      //// aad = available article data
-      const aad = await model.getArticleById(request.params);
+      //// asd = available summary data
+      const asd = await model.getSummaryById(request.params);
 
       const response = await model.updateArticle(
         request.body,
         request.params,
-        aad.data
+        asd.data[0]
       );
 
       reply.code(201).send(response);
@@ -63,9 +50,9 @@ module.exports = {
       });
     }
   },
-  deleteArticleById: async (request, reply) => {
+  deleteSummary: async (request, reply) => {
     try {
-      const response = await model.deleteArticleById(request.params);
+      const response = await model.deleteSummary(request.params);
       reply.code(201).send(response);
     } catch (error) {
       reply.code(500).send({
